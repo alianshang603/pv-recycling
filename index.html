@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer">
-<title>光伏组件回收价格分析</title>
+<title>废旧光伏组件回收价值测算</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -147,7 +147,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
 .tbl tbody tr.picked td{background:rgba(12,68,124,0.08)}
 .tbl th:nth-child(1),.tbl td:nth-child(1){position:sticky;left:0;z-index:4;background:var(--bg);width:var(--col-seq);min-width:var(--col-seq);max-width:var(--col-seq)}
 .tbl th:nth-child(2),.tbl td:nth-child(2){position:sticky;left:var(--col-seq);z-index:4;background:var(--bg);width:var(--col-pick);min-width:var(--col-pick);max-width:var(--col-pick);box-shadow:2px 0 0 var(--border)}
-/* 主表 29 列宽度，按"表头宽度 vs 最长实际内容"取大值 + 16px 边距 */
+/* 主表 28 列宽度，按"表头宽度 vs 最长实际内容"取大值 + 16px 边距 */
 .tbl th:nth-child(3),.tbl td:nth-child(3){width:38px;min-width:38px}        /* 类别 */
 .tbl th:nth-child(4),.tbl td:nth-child(4){width:70px;min-width:70px}        /* 规格(mm) */
 .tbl th:nth-child(5),.tbl td:nth-child(5){width:40px;min-width:40px}        /* 框高 30mm */
@@ -173,7 +173,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
 .tbl th:nth-child(25),.tbl td:nth-child(25){width:42px;min-width:42px}      /* 生产 */
 .tbl th:nth-child(26),.tbl td:nth-child(26){width:42px;min-width:42px}      /* 运输 */
 .tbl th:nth-child(27),.tbl td:nth-child(27){width:60px;min-width:60px;background:var(--green-bg)}  /* 理论上限 高亮 */
-.tbl th:nth-child(28),.tbl td:nth-child(28){width:60px;min-width:60px;background:var(--amber-bg)}  /* 建议采购 高亮 */
+.tbl th:nth-child(28),.tbl td:nth-child(28){width:60px;min-width:60px;background:var(--amber-bg)}  /* 采购报价 高亮 */
 .tbl th:nth-child(29),.tbl td:nth-child(29){width:60px;min-width:60px}      /* 参考报价 */
 .tbl thead th:nth-child(1),.tbl thead th:nth-child(2){z-index:5;background:var(--bg3)}
 .tbl tbody tr.est td:nth-child(1),.tbl tbody tr.est td:nth-child(2){background:var(--sug-row)}
@@ -356,7 +356,7 @@ select, option{font-size:11px;}
 <body>
 <div class="wrap">
   <div class="hd">
-    <h1>光伏组件回收价格分析</h1>
+    <h1>废旧光伏组件回收价值测算</h1>
   </div>
 
   <div class="tabs" role="tablist" aria-label="主功能切换">
@@ -460,6 +460,7 @@ select, option{font-size:11px;}
               <div class="pc-formula">建议采购 = <b>理论上限 × 比例</b>（默认 0.95 = 留 5% 议价缓冲）</div>
               <div class="pc-row"><label for="ak-sug-s">单玻比</label><input type="number" id="ak-sug-s" data-key="SUG_RATIO.single" step="0.01" min="0" max="1"><span class="unit">0-1</span></div>
               <div class="pc-row"><label for="ak-sug-d">双玻比</label><input type="number" id="ak-sug-d" data-key="SUG_RATIO.double" step="0.01" min="0" max="1"><span class="unit">0-1</span></div>
+              <div class="pc-row"><label for="ak-profit">单片利润</label><input type="number" id="ak-profit" value="5" min="0" step="0.5"><span class="unit">元</span></div>
             </div>
           </div>
         </div>
@@ -534,13 +535,13 @@ select, option{font-size:11px;}
           </div>
         </div>
 
-        <div class="sec">全部组件规格表 <button id="btn-export-xls" class="export-btn" title="导出当前筛选视图为 CSV，Excel 可直接打开">📥 导出 CSV</button></div><div class="pager" id="pager1"></div>
+        <div class="sec">全部组件规格表 <button id="btn-export-xls" class="export-btn" title="导出当前筛选视图为 CSV，Excel 可直接打开">📥 导出 Excel</button></div><div class="pager" id="pager1"></div>
         <div class="scroll-hint">← 左右滑动查看完整数据 →</div>
         <div class="tw"><table class="tbl"><thead><tr>
           <th class="la">序号</th><th class="la">选择</th><th class="la">类别</th><th class="la">规格(mm)</th><th class="la hm">框高</th><th class="la hm">线数</th><th class="la hm">电池尺寸</th><th class="la hm">半/整片</th><th class="la hm">片数</th><th class="la">功率</th><th class="la">技术路线</th><th class="la hm">年代</th>
           <th class="hm">重量</th><th class="hm">铝kg</th><th>银g</th><th class="hm">焊带</th><th class="hm">玻璃kg</th>
           <th class="hm">银贡献</th><th class="hm">铝贡献</th><th class="hm">铜贡献</th><th class="hm">玻贡献</th><th class="hm">接线盒</th>
-          <th class="hm">净值含税</th><th>÷1.13</th><th class="hm">生产</th><th class="hm">运输</th><th>理论上限</th><th>建议采购</th><th>参考报价</th>
+          <th class="hm">净值含税</th><th>÷1.13</th><th class="hm">生产</th><th class="hm">运输</th><th>理论上限</th><th>采购报价</th><th>参考报价</th>
         </tr></thead><tbody id="tb-all"></tbody></table></div>
 
         <div class="fold-wrap">
@@ -757,11 +758,11 @@ select, option{font-size:11px;}
           <div class="kpi-card"><div class="k">周转次数</div><div class="v" id="kpi-turnover">-</div><div class="s">年内有效周转</div><div class="fx">365 ÷ 回款天数 × 资金利用率</div></div>
         </div>
         <div class="result-grid">
-          <div class="result-item"><div class="k">批次收入（不含税）</div><div class="v" id="res-revenue">-</div><div class="fx">数量 × (含税净值 ÷ VAT)，未扣 pc+tc</div></div>
+          <div class="result-item"><div class="k">批次收入（不含税）</div><div class="v" id="res-revenue">-</div><div class="fx">数量 × 主表理论上限 ÷ VAT(1.13)</div></div>
           <div class="result-item"><div class="k">采购成本（不含税）</div><div class="v" id="res-buy">-</div><div class="fx">数量 × (采购单价 ÷ (1+发票率))；有票可抵扣进项</div></div>
-          <div class="result-item"><div class="k">运营成本</div><div class="v" id="res-cost">-</div><div class="fx">数量 × (生产 pc + 运输 tc)；风险折扣单独扣</div></div>
+          <div class="result-item"><div class="k">运营成本</div><div class="v" id="res-cost">-</div><div class="fx">数量 × (生产 pc + 运输 tc + 风险折扣)</div></div>
           <div class="result-item"><div class="k">资金成本</div><div class="v" id="res-fin">-</div><div class="fx">(不含税采购 + 0.5×运营) × 年化率 × 回款天数 ÷ 365</div></div>
-          <div class="result-item"><div class="k">批次净利</div><div class="v" id="res-profit">-</div><div class="fx">收入 − 采购 − 运营 − 资金 − 风险折扣×数量</div></div>
+          <div class="result-item"><div class="k">批次净利</div><div class="v" id="res-profit">-</div><div class="fx">收入 − 采购 − 运营 − 资金（四项可直接相减）</div></div>
           <div class="result-item"><div class="k">投资判断</div><div class="v" id="res-judge">-</div><div class="fx">采购价/毛利率/年化 三项 vs 目标值</div></div>
         </div>
         <div class="formula-box">
@@ -773,7 +774,7 @@ select, option{font-size:11px;}
             批次净利 =（单位收入 − 采购单价 − 单位运营成本 − 单位资金成本）× 采购数量<br>
             <br>
             <b>主表建议采购</b> = 理论上限 × SUG_RATIO（单玻/双玻默认均 0.95），即留 5% 缓冲覆盖批次实测偏差 + 议价空间。判断"优先"档要求采购单价 ≤ 此建议价。该比例可在面板顶部"建议采购比"区调整，越接近 1.00 越激进。<br>
-            <b>每片利润（单位净利）</b> = 单位收入 − 不含税采购 − 单位运营成本 − 单位资金成本 − 风险折扣。其中单位收入 = 含税净值 ÷ VAT（**未扣 pc+tc**，pc+tc 走"运营成本"独立扣）；运营成本 = pc + tc；资金成本 = (不含税采购 + 0.5×运营成本) × 年化资金率 × 回款天数 ÷ 365。<br>
+            <b>每片利润（单位净利）</b> = 单位收入 − 采购单价 − 单位运营成本 − 单位资金成本。其中单位收入 = 主表理论上限（已扣 pc+tc）÷ VAT；运营成本 = pc + tc + 风险折扣；资金成本 = (采购价 + 0.5×运营成本) × 年化资金率 × 回款天数 ÷ 365。<br>
             <br>
             <b>判断阈值</b>：单位净利 ≥ 0 且 年化 ≥ 8% 且 毛利率 ≥ 5% 是基线；超过基线即<span class="judge-warn">"谨慎"</span>，毛利率 ≥ 8% 且年化 ≥ 15% 升为<span class="judge-warn">"可做"</span>，三项目标值全达标 + 采购价不超过建议采购价 = <span class="judge-good">"优先"</span>。
           </div>
@@ -810,12 +811,13 @@ var PAGE_SIZE = 20;                          // 主表分页大小
 var PRICE_AUTO_REFRESH_MS = 5*60*1000;       // 价格自动刷新间隔 (5 分钟)
 var DEFAULT_PC = 13;                          // 生产成本元/片默认值
 var DEFAULT_TC = 5;                           // 运输成本元/片默认值
+var DEFAULT_PROFIT_PER_PIECE = 5;             // 单片利润默认值
 var CURRENT_YEAR = 2026;                     // 用于老化曲线计算
 
 /* ========== 假设参数（可被 UI / localStorage 覆盖） ========== */
 var ASSUMP = {
   AG_REC: 0.92, AG_DISC: 0.83,
-  AL_REC: { single: 0.96, double: 0.90 },   // 铝边框拆解回收率：单玻 0.96；双玻 0.90（双玻边框窄薄、卡扣破损率高，回收率略低；与"边框重量"K_AL 是两个独立维度）
+  AL_REC: { single: 0.96, double: 0.90 },   // 铝边框回收率：单玻 0.96；双玻 0.90（双玻边框窄薄、嵌槽更深，拆解时连接件残留与卡扣破损率较高）
   AL_DISC: 0.87,
   CU_FEE: 9000, CU_DISC: 0.97,
   CU_REC_SMALL: 0.95,         // 焊带回收率：<182mm 老组件（焊带较粗，工艺成熟）
@@ -824,11 +826,9 @@ var ASSUMP = {
   GL_REC: 0.85,               // 玻璃回收率（破碎损耗 + 杂质率综合）
   JB_PRICE: 5,                // 接线盒回收价值（元/片，固定值）
   VAT: 1.13,
-  // 铝边框单位重量系数（kg/(mm·mm)）：alKg ≈ K_AL × 周长(mm) × 框高(mm) × 0.95(保守扣减)
-  // 此处仅为「出厂物理重量」估算系数，与拆解回收率(AL_REC)是两个独立维度。
-  //   单玻 1.37e-5：行业主流型材线密度（实心 + 加厚翼）
-  //   双玻 1.12e-5：无背板可用更窄/更薄边框，型材整体轻约 20%（出厂物理事实，非回收损失）
-  // 配合 0.95 保守扣减后与实测/数据对齐,容差 8% 覆盖型材重量的合理工艺差异
+  // 铝边框单位系数（kg/(mm·mm)）：alKg ≈ K_AL × 周长(mm) × 框高(mm) × 0.95(保守扣减)
+  // 单玻 1.37e-5（标准型材线密度估算值）；双玻 1.12e-5（无背板,可用更窄/更薄边框）
+  // 校验时配合 0.95 保守扣减后与实测/数据对齐,容差 8% 覆盖型材重量的合理工艺差异
   K_AL: { single: 1.37e-5, double: 1.12e-5 },
   SUG_RATIO: { single: 0.95, double: 0.95 },
   // 整片重量估算用：接线盒含线缆固定重量 + 单位面积其他材料密度
@@ -934,8 +934,8 @@ function setSrcAll(cls, txt){
 var PRICE_SANE = {
   // 修复 BUG-3:原银上限 20000 偏窄,默认价 18135 已贴近,放宽至 35000 覆盖未来上涨情景
   silverCnyKg:    [3000,  35000],   // 沪银现货 3-35k 元/kg
-  aluminumCnyTon: [10000, 40000],   // 沪铝 10-40k 元/吨（覆盖 2020 低点至未来高点）
-  copperCnyTon:   [40000, 150000]   // 沪铜 40-150k 元/吨（覆盖 2020 低点至 2024+ 高点）
+  aluminumCnyTon: [10000, 40000],   // 沪铝 12-25k 元/吨
+  copperCnyTon:   [40000, 150000]   // 沪铜 50-110k 元/吨,放宽以备 2024+ 高点
 };
 function inSaneRange(v, key){
   // 修复 BUG-1 兜底:本地 /prices.json 等数据源可能写字符串,显式 parseFloat
@@ -1340,6 +1340,15 @@ function techTag(t){
   else if(/单晶BSF/.test(s) && !/多晶/.test(s)) c='t-mono';
   return '<span class="tag '+c+'">'+escapeHtml(s)+'</span>';
 }
+function priceCell(price, ceil, isEst, sugRatio){
+  if(!isEst){
+    var r=price/ceil;
+    return '<span class="act-num">'+price+'</span>&nbsp;<span class="mu">'+fp(r)+'</span>&nbsp;'+badge(r);
+  }
+  var sug=Math.round(ceil*sugRatio*2)/2;
+  var r2=sug/ceil;
+  return '<span class="sug-wrap"><span class="sug-num">'+sug.toFixed(1)+'</span><span class="bd-sug">建议</span></span>&nbsp;<span class="mu">'+fp(r2)+'</span>&nbsp;'+badge(r2);
+}
 
 /* 优化点 #3：银含量阈值表抽出唯一来源 */
 function getSilverRange(kind, tech, yearText){
@@ -1355,7 +1364,7 @@ function getSilverRange(kind, tech, yearText){
     //   BSF 3BB     ~ 100-140 mg/cell × 48-96 = 5-13 g/片
     //   PERC 4-5BB  ~ 90 mg/cell × 60-96      = 5-9 g/片
     // 阈值留 ±25% 余量，超出再触发"银待核"
-    if(y<=2012) return [5.5, 20.0];   // 5.5 而非 6.0：覆盖 BSF 2BB 36 片 1480×680 物理 5.9
+    if(y<=2012) return [6.0, 20.0];
     if(y<=2016) return [4.0, 14.0];
     return [3.5, 10.0];
   }
@@ -1369,12 +1378,8 @@ function getSilverRange(kind, tech, yearText){
 function reviewCheck(kind, tech, yearText, ag, alKg, cuKg, area){
   var range=getSilverRange(kind, tech, yearText);
   var safeArea=Math.max(area, 0.1);
-  // 铝边框 kg/m² 阈值：按 kind 分档，单玻框型材厚（K_AL=1.37e-5）、双玻轻薄（K_AL=1.12e-5）
-  // 单玻：典型 1.0-2.4，加厚框 frmH≥45 可到 2.6
-  // 双玻：典型 0.7-1.6（出厂物理重量直接反映在 K_AL 差异上，与回收率无关）
+  // 铝边框：1.6kW/m² 下大致 1.0-1.7 kg/m²，老旧小组件偏高（小面积、长边框比）
   var alPerSqm=alKg/safeArea;
-  var alLo = (kind==='double') ? 0.7 : 0.9;
-  var alHi = (kind==='double') ? 1.6 : 2.6;
   // 焊带：g/W 出厂物理量 × 拆解 mechanical 损耗 0.95 (提取损耗由 CU_REC × CU_DISC 另行处理)
   //       BSF/PERC 全片 (2BB/3BB/4-5BB) 0.52 g/W；PERC 半片 MBB 0.46 / SMBB 0.44
   //       HJT 高温 MBB 0.44 / SMBB 0.42（legacy 粗焊带）
@@ -1385,7 +1390,7 @@ function reviewCheck(kind, tech, yearText, ag, alKg, cuKg, area){
   var cuPerSqm=cuKg/safeArea;
   if(ag<range[0] || ag>range[1]) return { state:'warn', label:'银待核' };
   if(cuPerSqm<0.05 || cuPerSqm>0.13) return { state:'warn', label:'焊带偏离' };
-  if(alPerSqm<alLo || alPerSqm>alHi) return { state:'warn', label:'铝待核' };
+  if(alPerSqm<0.9 || alPerSqm>2.4)   return { state:'warn', label:'铝待核' };
   return { state:'ok', label:'正常' };
 }
 function reviewTagHtml(check){
@@ -1437,6 +1442,7 @@ function calcCommon(category, key, name, tech, year, alKg, agG, cuKg, glKg, pric
     nv:nv, nvEx:nvEx, ceil:ceil, isEst:isEst,
     review:reviewTagHtml(check),
     reviewState:check.state,
+    cell:priceCell(price, ceil, isEst, sugRatio),
     specObj:{
       key:key,
       name:name,
@@ -2038,6 +2044,48 @@ var CU_RULES = [
   { match: r => /BSF/.test(r.t),                              gPerW: 0.52, note: 'BSF 默认' },
 ];
 
+function cuGPerW(tech, year, bb){
+  var ctx = {
+    t: String(tech||''),
+    bb: String(bb||''),
+    y: parseInt(String(year).split('-')[0], 10) || 2020
+  };
+  for(var i=0; i<CU_RULES.length; i++){
+    if(CU_RULES[i].match(ctx)) return CU_RULES[i].gPerW;
+  }
+  return 0.45;
+}
+
+// ============================================================
+// 老化曲线（age_yr → 银/铜保留系数）
+// 算法基础：行业 ~1% 银损耗/年 × 失稳系数 1.5（焊点氧化+背板降解+破损cell）
+// 适用于"物理量 × 老化"反推（CPIA 量产中位是 as-produced，需扣老化得 aged）
+// ============================================================
+var AGING_CURVE = [
+  { ageMax: 2,  factor: 1.00, label: '0-2yr 新片' },
+  { ageMax: 5,  factor: 0.96, label: '3-5yr 轻度' },
+  { ageMax: 9,  factor: 0.91, label: '6-9yr 中度' },
+  { ageMax: 13, factor: 0.85, label: '10-13yr 加剧' },
+  { ageMax: 17, factor: 0.80, label: '14-17yr 重度' },
+  { ageMax: 99, factor: 0.72, label: '18+yr 极老' },
+];
+
+function agingFactor(productionYear, currentYear){
+  var age = (currentYear || new Date().getFullYear()) - productionYear;
+  for(var i=0; i<AGING_CURVE.length; i++){
+    if(age <= AGING_CURVE[i].ageMax) return AGING_CURVE[i].factor;
+  }
+  return AGING_CURVE[AGING_CURVE.length-1].factor;
+}
+
+// ============================================================
+// 玻璃密度查表（kg/m²，含强化后微损耗）
+// ============================================================
+var GLASS_KG_PER_SQM = {
+  single_3_2mm: 8.0,    // 3.2mm 钢化前盖
+  double_2x2mm: 10.0,   // 2+2mm 双玻
+};
+
 function silverMgPerCell(tech, year, bb, cellCount, cellStr){
   var cs = String(cellStr || '');
   var csMatch = /(\d+(?:\.\d+)?)mm/.exec(cs);
@@ -2155,7 +2203,7 @@ function splitCell(s){
   // 兜底
   return { size: s, type: '', count: '' };
 }
-function renderRow(meta, seq, pc, tc){
+function renderRow(meta, seq, pc, tc, profit){
   var d=meta.row, x=meta.x;
   var classes=[];
   if(STATE.selectedKey===meta.key) classes.push('picked');
@@ -2179,9 +2227,9 @@ function renderRow(meta, seq, pc, tc){
     + '<td class="la">'+escapeHtml(d[3])+'</td>'
     + '<td class="la">'+techTag(d[12])+'</td>'
     + '<td class="la hm">'+escapeHtml(d[11])+'</td>'
-    + commonTail(x, d[6], d[7], d[8], d[9], pc, tc);
+    + commonTail(x, d[6], d[7], d[8], d[9], pc, tc, profit);
 }
-function commonTail(x, alKg, agG, cuKg, glKg, pc, tc){
+function commonTail(x, alKg, agG, cuKg, glKg, pc, tc, profit){
   return ''
     + '<td class="hm">'+f(x.weight)+'</td>'
     + '<td class="hm">'+f(alKg)+'</td>'
@@ -2198,7 +2246,7 @@ function commonTail(x, alKg, agG, cuKg, glKg, pc, tc){
     + '<td class="hm"><span class="mu">'+f(pc)+'</span></td>'
     + '<td class="hm"><span class="mu">'+f(tc)+'</span></td>'
     + '<td><b>'+f(x.ceil)+'</b></td>'
-    + '<td><b>'+f(x.specObj.suggest)+'</b></td>'
+    + '<td><b>'+f(x.ceil - (profit||0))+'</b></td>'
     + '<td>'+(x.isEst ? '<span class="mu">—</span>' : '<b>'+f(x.specObj.price)+'</b>')+'</td>'
     + '</tr>';
 }
@@ -2210,6 +2258,7 @@ function render(){
   var cuPrice=numOr($('cu-price').value, PRICE_DEFAULTS.CU);
   var pc=numOr($('pc').value, 0);
   var tc=numOr($('tc').value, 0);
+  var profit=numOr($('ak-profit') && $('ak-profit').value, DEFAULT_PROFIT_PER_PIECE);
   var AGe=agPrice/1000 * ASSUMP.AG_REC * ASSUMP.AG_DISC;
   var ALe_s=alPrice/1000 * (ASSUMP.AL_REC.single) * ASSUMP.AL_DISC;
   var ALe_d=alPrice/1000 * (ASSUMP.AL_REC.double) * ASSUMP.AL_DISC;
@@ -2280,7 +2329,7 @@ function render(){
     if(pageData.length===0){
       tbAll.innerHTML = '<tr><td colspan="'+TABLE_COL_COUNT+'" style="text-align:center;padding:20px;color:var(--text3)">没有匹配的规格，请调整筛选条件</td></tr>';
     } else {
-      tbAll.innerHTML = pageData.map(function(meta, i){ return renderRow(meta, startIdx+i+1, pc, tc); }).join('');
+      tbAll.innerHTML = pageData.map(function(meta, i){ return renderRow(meta, startIdx+i+1, pc, tc, profit); }).join('');
     }
   }
   renderPager('pager1', STATE.page, totalPages);
@@ -2326,11 +2375,10 @@ function renderInvestment(){
   var unitProfit=unitRevenue - buyEffective - unitCost - finCost - riskCut;
   // B2 修复：buyTotal 显示用 buyEffective（不含税口径），与 profit 计算口径一致
   // 用户心算 收入 − 采购 − 运营 − 资金 = 批次净利 现在可以平账
+  var vatDeduction = (buy - buyEffective) * qty;  // VAT 进项抵扣额（含税付款 − 不含税成本）
   var revenue=unitRevenue*qty, buyTotal=buyEffective*qty, opCost=unitCost*qty, finTotal=finCost*qty, profit=unitProfit*qty;
   var margin=revenue>0 ? profit/revenue : 0;
-  // L1 修复延伸：invested 也用不含税口径，与 financeBase / unitProfit 对齐
-  // 之前混用 含税 buy + 不含税 unitCost 让 IRR 系统性低估 2-3%
-  var invested=buyEffective + unitCost;
+  var invested=buy + unitCost;
   var annualTurns=(365/days)*utilizationRate;
   var annualProfit=unitProfit*annualTurns;
   var irr=invested>0 ? annualProfit/invested : 0;
@@ -2443,9 +2491,9 @@ function resetAssumpDefaults(){
   // 深拷贝出厂值回 ASSUMP
   ASSUMP = JSON.parse(JSON.stringify(ASSUMP_DEFAULTS));
   // #7 同时重置非 data-key 的基准价/成本输入（这些不在 data-key 系统内）
-  var nonKeyDefaults = { 'ag-price': PRICE_DEFAULTS.AG, 'al-price': PRICE_DEFAULTS.AL, 'cu-price': PRICE_DEFAULTS.CU, 'pc': DEFAULT_PC, 'tc': DEFAULT_TC };
-  // 同步清除 localStorage 中保存的手工现货价 + pc/tc（恢复出厂 → 全部回默认）
-  ['ag-price','al-price','cu-price','pc','tc'].forEach(function(id){
+  var nonKeyDefaults = { 'ag-price': PRICE_DEFAULTS.AG, 'al-price': PRICE_DEFAULTS.AL, 'cu-price': PRICE_DEFAULTS.CU, 'pc': DEFAULT_PC, 'tc': DEFAULT_TC, 'ak-profit': DEFAULT_PROFIT_PER_PIECE };
+  // 同步清除 localStorage 中保存的手工现货价 + pc/tc/ak-profit（恢复出厂 → 全部回默认）
+  ['ag-price','al-price','cu-price','pc','tc','ak-profit'].forEach(function(id){
     try { localStorage.removeItem('pv_recyc_' + id); } catch(e) {}
   });
   Object.keys(nonKeyDefaults).forEach(function(id){
@@ -2497,12 +2545,12 @@ function attachEvents(){
   var renderDebounced=debounce(render, 120);
   var renderInvDebounced=debounce(renderInvestment, 120);
 
-  // 价格 / 成本输入：用 debounce + 持久化（仅 ag/al/cu 现货价 + pc/tc）
-  ['ag-price','al-price','cu-price','pc','tc'].forEach(function(id){
+  // 价格 / 成本输入：用 debounce + 持久化现货价（仅 ag/al/cu）
+  ['ag-price','al-price','cu-price','pc','tc','ak-profit'].forEach(function(id){
     var el=$(id); if(el) el.addEventListener('input', function(){
       renderDebounced();   // render 内会更新 *-eff-display
-      // 持久化银/铝/铜手工现货价 + 生产/运输
-      if(/^(ag|al|cu)-price$/.test(id) || /^(pc|tc)$/.test(id)){
+      // 持久化银/铝/铜手工现货价 + 生产/运输/单片利润
+      if(/^(ag|al|cu)-price$/.test(id) || /^(pc|tc|ak-profit)$/.test(id)){
         try {
           var v = el.value.trim();
           if(v === '' || !Number.isFinite(parseFloat(v))){
@@ -2510,7 +2558,7 @@ function attachEvents(){
           } else {
             localStorage.setItem('pv_recyc_' + id, v);
           }
-          // 现货价才需要更新 "手工·已锁定" 标签（pc/tc 无 src 标签）
+          // 现货价才需要更新 "手工·已锁定" 标签（pc/tc/ak-profit 无 src 标签）
           if(/^(ag|al|cu)-price$/.test(id)){
             var srcTag = $(id.split('-')[0] + '-src-tag');
             if(srcTag && localStorage.getItem('pv_recyc_' + id) != null){
@@ -2687,12 +2735,13 @@ loadExternalData().finally(function(){
       el.value = PRICE_DEFAULTS[k];
     }
   });
-  // pc / tc 用全局默认（之后会被 localStorage 覆盖）
+  // pc / tc / ak-profit 用全局默认（之后会被 localStorage 覆盖）
   if($('pc')) $('pc').value = $('pc').value || DEFAULT_PC;
   if($('tc')) $('tc').value = $('tc').value || DEFAULT_TC;
+  if($('ak-profit')) $('ak-profit').value = $('ak-profit').value || DEFAULT_PROFIT_PER_PIECE;
 
-  // 从 localStorage 恢复 pc/tc（用户调过的值会跨会话保留）
-  ['pc','tc'].forEach(function(id){
+  // 从 localStorage 恢复 pc/tc/ak-profit（用户调过的值会跨会话保留）
+  ['pc','tc','ak-profit'].forEach(function(id){
     try {
       var saved = localStorage.getItem('pv_recyc_' + id);
       if(saved != null && !isNaN(parseFloat(saved))){
@@ -2736,14 +2785,15 @@ loadExternalData().finally(function(){
     var allRowsRaw = singleMetas.concat(doubleMetas);
     var allRows = applyFilters(allRowsRaw);
 
-    // 读当前 pc/tc
+    // 读当前 pc/tc/profit
     var pc = numOr($('pc').value, 0);
     var tc = numOr($('tc').value, 0);
+    var profit = numOr($('ak-profit') && $('ak-profit').value, DEFAULT_PROFIT_PER_PIECE);
 
     // 用 renderRow 生成所有 tr HTML，挂到 detached tbody 上读 cell 文本（最低重复代码方案）
     var tempTbody = document.createElement('tbody');
     tempTbody.innerHTML = allRows.map(function(meta, i){
-      return renderRow(meta, i + 1, pc, tc);
+      return renderRow(meta, i + 1, pc, tc, profit);
     }).join('');
 
     function csvEscape(s){
