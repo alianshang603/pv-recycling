@@ -134,7 +134,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans G
 .prio-btn.active{background:var(--green-bg);border-color:var(--green-bdr);color:var(--green-txt);font-weight:500}
 .bd-sug{background:var(--amber-bdr);color:#fff;font-size:8.5px;padding:1px 4px;border-radius:2px;font-weight:600;flex-shrink:0}
 .tw{overflow:auto;-webkit-overflow-scrolling:touch;width:100%;border-radius:6px;border:0.5px solid var(--border)}
-.pager{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
+.pager-wrap{display:flex;justify-content:flex-end;align-items:center;gap:14px;margin-top:6px;flex-wrap:wrap}
+.page-size-ctrl{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)}
+.page-size-ctrl select{padding:3px 6px;border:0.5px solid var(--border);border-radius:4px;font-size:11px;background:var(--bg);color:var(--text);min-width:64px;cursor:pointer}
+.page-size-ctrl select:focus{border-color:var(--text2);outline:none}
+.pager{display:flex;justify-content:flex-end;gap:6px}
+.pager-wrap .pager{margin-top:0}
 .pager button{padding:3px 8px;font-size:10px;border:0.5px solid var(--border);background:var(--bg);cursor:pointer;border-radius:4px}
 .pager button.active{background:var(--blue-bg);color:var(--blue-txt)}
 .tbl{border-collapse:collapse;font-size:11px;white-space:nowrap;width:100%;min-width:1502px}
@@ -535,7 +540,7 @@ select, option{font-size:11px;}
           </div>
         </div>
 
-        <div class="sec">全部组件规格表 <button id="btn-export-xls" class="export-btn" title="导出当前筛选视图为 CSV，Excel 可直接打开">📥 导出 Excel</button></div><div class="pager" id="pager1"></div>
+        <div class="sec">全部组件规格表 <button id="btn-export-xls" class="export-btn" title="导出当前筛选视图为 CSV，Excel 可直接打开">📥 导出 Excel</button></div><div class="pager-wrap"><span class="page-size-ctrl">每页 <select id="page-size" aria-label="每页显示行数"><option value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="9999">全部</option></select> 条</span><div class="pager" id="pager1"></div></div>
         <div class="scroll-hint">← 左右滑动查看完整数据 →</div>
         <div class="tw"><table class="tbl"><thead><tr>
           <th class="la">序号</th><th class="la">选择</th><th class="la">类别</th><th class="la">规格(mm)</th><th class="la hm">框高</th><th class="la hm">线数</th><th class="la hm">电池尺寸</th><th class="la hm">半/整片</th><th class="la hm">片数</th><th class="la">功率</th><th class="la">技术路线</th><th class="la hm">年代</th>
@@ -557,7 +562,7 @@ select, option{font-size:11px;}
                 <div class="side-card">
                   <h3>银含量段位参考表</h3>
                   <div style="font-size:10.5px;color:var(--text2);margin-bottom:6px;line-height:1.55">
-                    mg/cell = ITRPV/CPIA 量产中位 × 老化系数。<b>锚点</b> = 该段位由几个市场参考报价校准（多锚点 = 反算稳定，单/无锚点 = 物理中位估算）。下游 92% × 83% = 76% 安全垫，本表为物理事实层。
+                    mg/cell = ITRPV/CPIA 量产中位 × 老化系数。<b>锚点</b> = 该段位由几个市场参考报价校准（多锚点 = 反算稳定，单/无锚点 = 物理中位估算）。92%（热解回收率）× 83%（折扣）= 76% 安全垫，本表为物理事实层。
                   </div>
                   <table class="silver-tier">
                     <thead><tr>
@@ -647,7 +652,7 @@ select, option{font-size:11px;}
                     &nbsp;&nbsp;玻璃 = 玻璃单价(<span id="meta-gl-price">0.25</span>) × <span id="meta-gl-rec">85%</span> × 重量 (元)<br>
                     &nbsp;&nbsp;接线盒 = 固定 <span id="meta-jb">5</span> 元/片<br>
                     <b>理论上限</b> = (Σ 各项变现 + 接线盒) ÷ <span id="meta-vat-coef">1.13</span> − 生产 − 运输（默认 18 元/片）<br>
-                    <b>价格基准</b>：行业指导价 <span id="meta-price-date">2026.4.14</span>（共 <span id="meta-price-count">—</span> 条带价规格）。<b style="color:var(--red-txt)">不再叠加保守 buffer</b>——下游 92% × 83% = 76% 安全边际已涵盖物理回收损失/加工费/利润/价格波动。
+                    <b>价格基准</b>：行业指导价 <span id="meta-price-date">2026.4.14</span>（共 <span id="meta-price-count">—</span> 条带价规格）。<b style="color:var(--red-txt)">不再叠加保守 buffer</b>——92%（热解阶段银回收率）× 83%（折扣，覆盖下游湿法/火法精炼损失 + 加工费 + 利润 + 价格波动）= 76% 安全边际。
                     </div>
                   </details>
                   <details class="method-d">
@@ -674,9 +679,9 @@ select, option{font-size:11px;}
                     </div>
                   </details>
                   <details class="method-d">
-                    <summary>焊带 g/W 分档（出厂物理量 × 拆解损耗）</summary>
+                    <summary>焊带 g/W 分档（出厂物理量）</summary>
                     <div class="md-body">
-                    口径：<b>出厂物理量 × 0.95</b>（拆解 mechanical 损耗：连接断裂 + 母线胶残留切弃 + 端头碎屑）。最终提取损耗 (~10%) 由 CU_REC × CU_DISC 在变现公式中独立处理。<br>
+                    口径：<b>出厂物理量</b>（g/W × 标称功率即得 kg/片）。拆解机械损耗 5% + 提取损耗 10% + discount 3% 合成总恢复率 ~83%，由 CU_REC(小尺寸 0.95 / 大尺寸 0.90) × CU_DISC(0.97) 在变现公式中统一处理，<b>不在本表预乘任何系数</b>。<br>
                     <br>
                     BSF/PERC 全片粗焊带（2BB/3BB/4-5BB）<b>0.52 g/W</b><br>
                     PERC 半片 MBB / SMBB 0.46 / 0.44<br>
@@ -685,7 +690,7 @@ select, option{font-size:11px;}
                     HJT 银包铜 MBB / SMBB / 0BB 0.36 / 0.34 / 0.30<br>
                     BC SMBB / 0BB 0.32 / 0.28（最低，最薄焊带）<br>
                     <br>
-                    数据源：ITRPV 2024 + CPIA《光伏产业发展路线图》历年。出厂典型 400-435 ton/GW（中位 ~420）。三层损耗合成：mechanical 5% × extraction 10% × discount 3% = 总恢复率 ~83%。
+                    数据源：ITRPV 2024 + CPIA《光伏产业发展路线图》历年。出厂典型 400-435 ton/GW（中位 ~420）。
                     </div>
                   </details>
                   <details class="method-d">
@@ -807,7 +812,7 @@ var PRICE_DEFAULTS = {
 // ============================================================
 // 全局运行参数
 // ============================================================
-var PAGE_SIZE = 20;                          // 主表分页大小
+var PAGE_SIZE = 10;                          // 主表分页大小（默认 10，可被 UI 选择器 / localStorage 覆盖）
 var PRICE_AUTO_REFRESH_MS = 5*60*1000;       // 价格自动刷新间隔 (5 分钟)
 var DEFAULT_PC = 13;                          // 生产成本元/片默认值
 var DEFAULT_TC = 5;                           // 运输成本元/片默认值
@@ -816,7 +821,7 @@ var CURRENT_YEAR = 2026;                     // 用于老化曲线计算
 
 /* ========== 假设参数（可被 UI / localStorage 覆盖） ========== */
 var ASSUMP = {
-  AG_REC: 0.92, AG_DISC: 0.83,
+  AG_REC: 0.92, AG_DISC: 0.83,   // AG_REC：热解阶段银回收率（EVA/背板热解时飞灰扬尘 + 焊带连带损失 ≈ 8%）；不含下游湿法/火法精炼环节
   AL_REC: { single: 0.96, double: 0.90 },   // 铝边框回收率：单玻 0.96；双玻 0.90（双玻边框窄薄、嵌槽更深，拆解时连接件残留与卡扣破损率较高）
   AL_DISC: 0.87,
   CU_FEE: 9000, CU_DISC: 0.97,
@@ -846,6 +851,7 @@ var PRICE_BASELINE_DATE = '2026-04-14';
 /* ========== 状态（不再挂 window） ========== */
 var STATE = {
   page: 1,
+  pageSize: PAGE_SIZE,  // 每页行数，可由用户选择器或 localStorage 覆盖
   selectedKey: '',
   selectedSpec: null,
   specMap: {},          // key -> specObj，用于 pickSpec 时查表，避免把 JSON 塞进 onclick
@@ -1301,18 +1307,26 @@ function alFrameWeight(l, w, h, kind){
 
 /* 启动时校验数据表 alKg 列是否合理（仅控制台告警，不阻断渲染）
  * 数据已按 ×0.95 统一保守扣减（型材公差 -2% + 拆解损耗 -3%），
- * 校验时把理论值乘相同系数对齐，避免假警告。 */
+ * 校验时把理论值乘相同系数对齐，避免假警告。
+ * 修复 BUG-G：原 if 内只有注释（死代码）。改为：默认静默，
+ *            把 window.SPEC_DEBUG=true 后才打告警，便于 dev 模式排查数据漂移。 */
 function validateSpecs(rows, kind){
   if(!rows || !rows.length) return;
+  if(typeof window === 'undefined' || !window.SPEC_DEBUG) return;
   var label = kind === 'double' ? '双玻' : '单玻';
   var THRESHOLD = 0.08;       // 8% 容差，覆盖型材重量的合理工艺差异
   var CONSERV   = 0.95;       // 数据保守扣减系数，与 process_aluminum 时使用的一致
+  var hits = 0;
   rows.forEach(function(d, i){
     var theoretical = alFrameWeight(d[0], d[1], d[5], kind) * CONSERV;
     if(theoretical > 0 && Math.abs(d[6] - theoretical)/theoretical > THRESHOLD){
-      // 偏离阈值静默处理（不打 console，保持控制台干净）
+      hits++;
+      console.warn('[validateSpecs] '+label+' row '+i+' '+d[0]+'x'+d[1]+' h'+d[5]+
+        ' alKg='+d[6]+' theory='+theoretical.toFixed(4)+
+        ' dev='+((d[6]-theoretical)/theoretical*100).toFixed(1)+'%');
     }
   });
+  if(hits) console.warn('[validateSpecs] '+label+': '+hits+'/'+rows.length+' rows exceed ±8% K_AL theory');
 }
 function f(n){ return Number(n).toFixed(1); }
 function fp(n){ return (n*100).toFixed(1)+'%'; }
@@ -1326,11 +1340,13 @@ function badge(r){
 function techTag(t){
   // 修复大小写：数据中 'TopCon' / 'TOPCon' 混用，需大小写不敏感匹配
   // 修复"单晶BSF"在"多晶/单晶BSF"子串中误命中：用结构性判定
+  // 修复 BUG-F：BC 正则要与 SILVER_RULES / CU_RULES / getSilverRange 对齐，
+  //            支持 ABC、HPBC、背接触；原 /\bX?BC\b/ 只能匹配 BC / XBC。
   var s = String(t);
   var hasPERC = /PERC/.test(s);
   var hasTC   = /topcon/i.test(s);
   var hasHJT  = /HJT/.test(s);
-  var hasBC   = /\bX?BC\b/.test(s);
+  var hasBC   = /^BC$|^XBC$|^ABC|^HPBC|背接触/.test(s);
   var c='t-poly';
   if(hasPERC && !hasTC) c='t-perc';
   else if(hasTC && !hasHJT && !hasBC) c='t-topcon';
@@ -1364,13 +1380,16 @@ function getSilverRange(kind, tech, yearText){
     //   BSF 3BB     ~ 100-140 mg/cell × 48-96 = 5-13 g/片
     //   PERC 4-5BB  ~ 90 mg/cell × 60-96      = 5-9 g/片
     // 阈值留 ±25% 余量，超出再触发"银待核"
-    if(y<=2012) return [6.0, 20.0];
+    // 修复 BUG-B：原 y<=2012 下限 6.0 卡死 36 片 BSF 2BB (5.9g) → 自家数据永久亮警告。
+    //            降到 5.5 留出 boundary 余量。
+    if(y<=2012) return [5.5, 20.0];
     if(y<=2016) return [4.0, 14.0];
     return [3.5, 10.0];
   }
   // 新组件单位 g/片，按主要技术路线 + 主栅形态
+  // 修复 BUG-F：BC 正则与 SILVER_RULES / techTag 对齐，支持 ABC/HPBC/背接触
   if(/HJT/.test(t)) return [3.0, 12.0];   // 含早期纯银（~7g）+ 银包铜 0BB（~4g）
-  if(/\bX?BC\b/.test(t))  return [3.5, 10.0];
+  if(/^BC$|^XBC$|^ABC|^HPBC|背接触/.test(t)) return [3.5, 10.0];
   if(/topcon/i.test(t)) return [3.0, 9.0];
   if(/PERC/.test(t))   return [3.0, 8.5];
   return [3.0, 10.0];
@@ -1378,9 +1397,14 @@ function getSilverRange(kind, tech, yearText){
 function reviewCheck(kind, tech, yearText, ag, alKg, cuKg, area){
   var range=getSilverRange(kind, tech, yearText);
   var safeArea=Math.max(area, 0.1);
-  // 铝边框：1.6kW/m² 下大致 1.0-1.7 kg/m²，老旧小组件偏高（小面积、长边框比）
+  // 铝边框按 kind 分档（修复 BUG-A+C）：
+  //   单玻 K_AL=1.37e-5 → 1.6kW/m² 下大致 1.0-1.7 kg/m²；加厚 50mm 框可达 2.4-2.5
+  //   双玻 K_AL=1.12e-5 → 大版型实际 0.75-0.95 kg/m²（双玻边框窄薄 18%）
+  // 旧版统一用 [0.9, 2.4] 导致 22/33 双玻规格 + BSF 60片加厚 50mm 框误报"铝待核"
   var alPerSqm=alKg/safeArea;
-  // 焊带：g/W 出厂物理量 × 拆解 mechanical 损耗 0.95 (提取损耗由 CU_REC × CU_DISC 另行处理)
+  var alRange=(kind==='double') ? [0.70, 2.00] : [0.90, 2.50];
+  // 焊带：g/W 出厂物理量（拆解机械损耗 + 提取损耗均由 calcCommon 里的 CU_REC × CU_DISC 处理，
+  //       本表 g/W 不预乘任何系数）
   //       BSF/PERC 全片 (2BB/3BB/4-5BB) 0.52 g/W；PERC 半片 MBB 0.46 / SMBB 0.44
   //       HJT 高温 MBB 0.44 / SMBB 0.42（legacy 粗焊带）
   //       TopCon MBB 0.40 / SMBB 0.38 / 0BB 0.32
@@ -1390,7 +1414,7 @@ function reviewCheck(kind, tech, yearText, ag, alKg, cuKg, area){
   var cuPerSqm=cuKg/safeArea;
   if(ag<range[0] || ag>range[1]) return { state:'warn', label:'银待核' };
   if(cuPerSqm<0.05 || cuPerSqm>0.13) return { state:'warn', label:'焊带偏离' };
-  if(alPerSqm<0.9 || alPerSqm>2.4)   return { state:'warn', label:'铝待核' };
+  if(alPerSqm<alRange[0] || alPerSqm>alRange[1]) return { state:'warn', label:'铝待核' };
   return { state:'ok', label:'正常' };
 }
 function reviewTagHtml(check){
@@ -1501,7 +1525,7 @@ function updatePickedSummary(){
  *   HJT 银包铜 MBB:75, SMBB:70, 0BB:55 (2024+)
  *   BC SMBB:80, BC 0BB:50 (爱旭 ABC / LONGi HPBC / Hi-MO 9)
  * 铝边框：1.37e-5 × 2(L+W) × frmH × 0.95（保守扣减），与行业口径 5300 kg/GW 一致
- * 焊带（g/W 出厂物理量 × 0.95 拆解损耗；提取损耗由 CU_REC × CU_DISC 处理）：
+ * 焊带（g/W 出厂物理量；拆解机械损耗 + 提取损耗由 CU_REC × CU_DISC 在变现公式中处理）：
  *   BSF / PERC 全片（2BB/3BB/4-5BB）：0.52
  *   PERC 半片 MBB：0.46    ｜  PERC 半片 SMBB：0.44
  *   HJT 高温 MBB：0.44     ｜  HJT 高温 SMBB：0.42（legacy 粗焊带）
@@ -1686,6 +1710,16 @@ async function loadExternalData(){
 /* ========== 分页（单表） ========== */
 function paginate(arr, page, size){ var start=(page-1)*size; return arr.slice(start, start+size); }
 function gotoPage(page){ STATE.page=page; render(); }
+/* 设置每页行数：合法值 ∈ {10,20,50,100,9999(全部)}，落地后回到第 1 页并持久化 */
+function setPageSize(size){
+  var ALLOWED = [10, 20, 50, 100, 9999];
+  var n = parseInt(size, 10);
+  if(ALLOWED.indexOf(n) < 0) n = PAGE_SIZE;
+  STATE.pageSize = n;
+  STATE.page = 1;
+  try { localStorage.setItem('pv_recyc_page_size', String(n)); } catch(e) {}
+  render();
+}
 
 /* ========== 筛选 ========== */
 function parsePowerRange(s){
@@ -1933,9 +1967,10 @@ function renderPager(elemId, current, total){
  *   算法基础：行业 ~1% 银损耗/年 + 失稳系数 1.5（焊点氧化 + 背板降解 + 破损 cell）
  *
  * 不重复打折原则：
- *   最终银价值 = mg/cell × 92%（回收率）× 83%（折扣）× 银价
- *                        ─────────────────
- *                        76% 安全边际，已涵盖物理回收损失 + 加工费 + 利润 + 价格波动
+ *   最终银价值 = mg/cell × 92%（热解阶段回收率）× 83%（折扣）× 银价
+ *                        ────────────────────────
+ *                        76% 安全边际，已涵盖热解扬尘损失 + 加工费 + 利润 + 价格波动
+ *                        （下游湿法/火法精炼的损失由 83% 折扣项承担）
  *   本表 mg 层只承担物理事实，不在此叠"取下沿"或"议价 buffer"
  *
  * 实测建议：某批次实测偏离 ±15% 时启动单批次议价（双向，高了上溢、低了下调）
@@ -1979,7 +2014,10 @@ var SILVER_RULES = [
   { match: r => /^单晶PERC$/.test(r.t) && /MBB/.test(r.bb),   mg: 88,  note: '单晶PERC G1 54片 MBB · 物理 92 × 0.96' },
 
   // —— PERC 4-5BB 全片（按片数细分，60片单参考价不可信，拉回物理中位）——
-  { match: r => /PERC/.test(r.t) && /4-5BB/.test(r.bb) && r.cells <= 60, mg: 115, note: '单晶PERC 4-5BB 60片 (2017) · 物理 125 × 0.92' },
+  // 修复 BUG-D：原 mg=115（推导 125 × 0.92）与数据 6.5g（=108 mg/cell）+ UI 参考表 580
+  //            行 "118 × 0.92 = 108" 三方不一致。
+  //            CPIA 2017 单晶 PERC 60片 实际中位约 118 mg/cell，aged 0.92 → 108。
+  { match: r => /PERC/.test(r.t) && /4-5BB/.test(r.bb) && r.cells <= 60, mg: 108, note: '单晶PERC 4-5BB 60片 (2017) · 物理 118 × 0.92' },
   { match: r => /PERC/.test(r.t) && /4-5BB/.test(r.bb) && r.cells <= 72, mg: 100, note: '单晶PERC 4-5BB 72片 (2018-19) · 物理 110 × 0.91' },
   { match: r => /PERC/.test(r.t) && /4-5BB/.test(r.bb),       mg: 95,  note: '单晶PERC 4-5BB 96片 (2018-19) · 物理 105 × 0.91' },
 
@@ -2002,9 +2040,11 @@ var SILVER_RULES = [
 ];
 
 // ============================================================
-// 焊带 g/W 规则表（出厂物理量 × 0.95 拆解损耗口径）
-// 优先级：从上到下，第一个 match 命中即返回
-// 数据来源：ITRPV 2024 + CPIA 历年路线图
+// 焊带 g/W 规则表
+// 修复 BUG-I：原注释 "× 0.95 拆解损耗口径" 与实际不符——本表是出厂物理量（=g/W × W），
+//            拆解机械损耗 + 提取损耗均由 calcCommon 里 cuRec(0.95/0.90) × CU_DISC(0.97) 统一处理，
+//            不在本表预乘。
+// 数据来源：ITRPV 2024 + CPIA 历年路线图（出厂物理量中位）
 // ============================================================
 var CU_RULES = [
   // —— HJT 银包铜（新片最薄焊带）——
@@ -2141,7 +2181,7 @@ function silverBasisText(d){
   lines.push('单组件银含量：' + actualAg.toFixed(1) + ' g/片');
   lines.push('');
   lines.push('口径说明：mg 层为物理事实，下游链路：');
-  lines.push('    × 92%（回收率：火法/湿法工艺损失）');
+  lines.push('    × 92%（热解阶段银回收率：EVA/背板热解时飞灰扬尘 + 焊带连带损失）');
   lines.push('    × 83%（折扣：加工费 + 利润 + 价格波动）');
   lines.push('  = 76% 安全边际，已涵盖议价空间。');
   lines.push('');
@@ -2294,7 +2334,7 @@ function render(){
   setText('sum-cost', (pc+tc).toFixed(1));
   setText('sum-vat',  (ASSUMP.VAT||1.13).toFixed(2));
 
-  var pageSize=PAGE_SIZE;
+  var pageSize=STATE.pageSize || PAGE_SIZE;
 
   // 计算所有规格 + 合并为一个数组（单玻 → 双玻）
   STATE.specMap={};
@@ -2633,6 +2673,10 @@ function attachEvents(){
   // populateFilterOptions 移到 loadExternalData().finally() 中调用，
   // 确保外部 /specs.json 加载完后下拉选项基于最新数据填充。
 
+  // 每页行数选择器
+  var ps=$('page-size');
+  if(ps) ps.addEventListener('change', function(){ setPageSize(this.value); });
+
   // 主表事件委托：选择按钮 + 分页按钮
   document.body.addEventListener('click', function(ev){
     var t=ev.target;
@@ -2768,6 +2812,18 @@ loadExternalData().finally(function(){
       }
     } catch(e) {}
   });
+
+  // 从 localStorage 恢复每页行数选择
+  try {
+    var savedPs = localStorage.getItem('pv_recyc_page_size');
+    var savedN = parseInt(savedPs, 10);
+    if([10, 20, 50, 100, 9999].indexOf(savedN) >= 0){
+      STATE.pageSize = savedN;
+    }
+    var psEl = $('page-size');
+    if(psEl) psEl.value = String(STATE.pageSize);
+  } catch(e) {}
+
   render();
   fetchPrices();
   startAutoRefresh();
