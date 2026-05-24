@@ -376,9 +376,9 @@ select, option{font-size:11px;}
         <div class="param-center collapsed" id="param-center">
           <div class="param-header">
             <h2>测算参数中心</h2>
-            <span class="param-hint">行情价 + 全部回收系数 + 单片成本，所有数值现场可改，全表立刻重算</span>
+            <span class="param-hint">行情价（SHFE 主连期货现价）+ 全部回收系数 + 单片成本，所有数值现场可改，全表立刻重算</span>
             <button class="param-toggle" id="param-toggle-btn" aria-expanded="false">展开 ▼</button>
-            <button class="refresh-btn" id="refresh-btn" aria-label="从行情接口刷新银/铝/铜基准价">↻ 刷新行情</button>
+            <button class="refresh-btn" id="refresh-btn" aria-label="从行情接口刷新银/铝/铜 SHFE 主连期货现价">↻ 刷新行情</button>
             <button class="plain-btn" id="reset-assump-btn">恢复出厂值</button>
           </div>
 
@@ -398,8 +398,8 @@ select, option{font-size:11px;}
                 <span class="pc-name">银</span>
                 <span class="src-tag src-manual" id="ag-src-tag">手工</span>
               </div>
-              <div class="pc-formula">现货 ÷ 1000 × <b>回收率</b> × <b>折扣</b></div>
-              <div class="pc-row"><label for="ag-price">现货价</label><input type="number" id="ag-price" value="18135" min="1" step="10"><span class="unit">元/kg</span></div>
+              <div class="pc-formula">期货现价 ÷ 1000 × <b>回收率</b> × <b>折扣</b></div>
+              <div class="pc-row"><label for="ag-price">期货现价</label><input type="number" id="ag-price" value="18135" min="1" step="10"><span class="unit">元/kg</span></div>
               <div class="pc-row"><label for="ak-ag-rec">回收率</label><input type="number" id="ak-ag-rec" data-key="AG_REC" step="0.01" min="0" max="1"><span class="unit">0-1</span></div>
               <div class="pc-row"><label for="ak-ag-disc">折扣</label><input type="number" id="ak-ag-disc" data-key="AG_DISC" step="0.01" min="0" max="1"><span class="unit">0-1</span></div>
               <div class="pc-eff" id="ag-eff-display">变现单价 <b>—</b> 元/g</div>
@@ -411,8 +411,8 @@ select, option{font-size:11px;}
                 <span class="pc-name">铝</span>
                 <span class="src-tag src-manual" id="al-src-tag">手工</span>
               </div>
-              <div class="pc-formula">现货 ÷ 1000 × <b>回收率</b>（按类别分档） × <b>折扣</b></div>
-              <div class="pc-row"><label for="al-price">现货价</label><input type="number" id="al-price" value="24430" min="1" step="100"><span class="unit">元/吨</span></div>
+              <div class="pc-formula">期货现价 ÷ 1000 × <b>回收率</b>（按类别分档） × <b>折扣</b></div>
+              <div class="pc-row"><label for="al-price">期货现价</label><input type="number" id="al-price" value="24430" min="1" step="100"><span class="unit">元/吨</span></div>
               <div class="pc-row"><label for="ak-al-rec-s">单玻回收率</label><input type="number" id="ak-al-rec-s" data-key="AL_REC.single" step="0.01" min="0" max="1"><span class="unit">0-1</span></div>
               <div class="pc-row"><label for="ak-al-rec-d">双玻回收率</label><input type="number" id="ak-al-rec-d" data-key="AL_REC.double" step="0.01" min="0" max="1"><span class="unit">0-1</span></div>
               <div class="pc-row"><label for="ak-al-disc">折扣</label><input type="number" id="ak-al-disc" data-key="AL_DISC" step="0.01" min="0" max="1"><span class="unit">0-1</span></div>
@@ -425,8 +425,8 @@ select, option{font-size:11px;}
                 <span class="pc-name">铜（焊带）</span>
                 <span class="src-tag src-manual" id="cu-src-tag">手工</span>
               </div>
-              <div class="pc-formula">(现货 − <b>加工费</b>) ÷ 1000 × <b>折扣</b> × <b>尺寸回收率</b></div>
-              <div class="pc-row"><label for="cu-price">现货价</label><input type="number" id="cu-price" value="101030" min="1" step="500"><span class="unit">元/吨</span></div>
+              <div class="pc-formula">(期货现价 − <b>加工费</b>) ÷ 1000 × <b>折扣</b> × <b>尺寸回收率</b></div>
+              <div class="pc-row"><label for="cu-price">期货现价</label><input type="number" id="cu-price" value="101030" min="1" step="500"><span class="unit">元/吨</span></div>
               <div class="pc-row"><label for="ak-cu-fee">加工费</label><input type="number" id="ak-cu-fee" data-key="CU_FEE" step="100" min="0"><span class="unit">元/吨</span></div>
               <div class="pc-row"><label for="ak-cu-disc">折扣</label><input type="number" id="ak-cu-disc" data-key="CU_DISC" step="0.01" min="0" max="1"><span class="unit">0-1</span></div>
               <div class="pc-row"><label for="ak-cu-rec-s">小尺寸回收</label><input type="number" id="ak-cu-rec-s" data-key="CU_REC_SMALL" step="0.01" min="0" max="1"><span class="unit">&lt;182mm</span></div>
@@ -646,9 +646,9 @@ select, option{font-size:11px;}
                     <summary>变现公式与含税口径</summary>
                     <div class="md-body">
                     <b>每 kg 或 g 变现：</b><br>
-                    &nbsp;&nbsp;银 = 现价÷1000 × <span id="meta-ag-rec">92%</span> × <span id="meta-ag-disc">83%</span> (元/g)<br>
-                    &nbsp;&nbsp;铝 = 现价÷1000 × <span id="meta-al-rec-s">96%</span>(单玻) / <span id="meta-al-rec-d">90%</span>(双玻) × <span id="meta-al-disc">87%</span> (元/kg)<br>
-                    &nbsp;&nbsp;铜 = (现价 − <span id="meta-cu-fee">9000</span>加工费)÷1000 × <span id="meta-cu-disc">97%</span> × {小尺寸&lt;182mm: <span id="meta-cu-rec-s">95%</span>, 大尺寸≥182mm: <span id="meta-cu-rec-l">90%</span>} (元/kg)<br>
+                    &nbsp;&nbsp;银 = 期货现价÷1000 × <span id="meta-ag-rec">92%</span> × <span id="meta-ag-disc">83%</span> (元/g)<br>
+                    &nbsp;&nbsp;铝 = 期货现价÷1000 × <span id="meta-al-rec-s">96%</span>(单玻) / <span id="meta-al-rec-d">90%</span>(双玻) × <span id="meta-al-disc">87%</span> (元/kg)<br>
+                    &nbsp;&nbsp;铜 = (期货现价 − <span id="meta-cu-fee">9000</span>加工费)÷1000 × <span id="meta-cu-disc">97%</span> × {小尺寸&lt;182mm: <span id="meta-cu-rec-s">95%</span>, 大尺寸≥182mm: <span id="meta-cu-rec-l">90%</span>} (元/kg)<br>
                     &nbsp;&nbsp;玻璃 = 玻璃单价(<span id="meta-gl-price">0.25</span>) × <span id="meta-gl-rec">85%</span> × 重量 (元)<br>
                     &nbsp;&nbsp;接线盒 = 固定 <span id="meta-jb">5</span> 元/片<br>
                     <b>理论上限</b> = (Σ 各项变现 + 接线盒) ÷ <span id="meta-vat-coef">1.13</span> − 生产 − 运输（默认 18 元/片）<br>
@@ -696,7 +696,7 @@ select, option{font-size:11px;}
                   <details class="method-d">
                     <summary>实操要点</summary>
                     <div class="md-body">
-                    <b>银价联动</b>：现货银每涨 1,000 元/kg，大尺寸单片净值约升 6-9 元。建议按上海金交所当月均价每周调整采购价。<br>
+                    <b>银价联动</b>：银价每涨 1,000 元/kg，大尺寸单片净值约升 6-9 元。本表自动取 <b>SHFE 主连期货</b>（盘中即时价，反应快）；若追求结算稳定性，可改按 <b>上海金交所当月均价</b> 每周调整采购价（与系统取值偏差 ±2%）。<br>
                     <b>双玻折扣</b>：相同尺寸双玻比单玻便宜 10-15 元（铝框轻 20%，玻璃多但铝/银相当）。<br>
                     <b>HJT 工艺识别</b>：2022-2023 高温浆段单片银 9g+，2024+ 银包铜段已降到 4-5g。务必按生产年代分档。<br>
                     <b>实测验证</b>：每批次抽 10 片做 ICP-OES 银含量化验，偏差超 ±15% 启动单批次议价（双向，高了上溢、低了下调）。<br>
@@ -713,6 +713,7 @@ select, option{font-size:11px;}
         <div class="note">
           <b>价格自动获取与故障排查</b><br>
           <b>① 数据源（按优先级）</b>：自有后端 <code>/api/prices</code> → 东方财富 push2（主源）→ 新浪期货 → 腾讯期货 → 公共 CORS 代理 → 静态 <code>/prices.json</code>。任意一级成功即停止，全部失败回落到手工输入。<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<b>取值口径</b>：SHFE 主连期货合约（沪银 AG / 沪铜 CU / 沪铝 AL）的<b>最新成交价</b>（盘中即时价，非昨结/开盘）；非交易时段返回最近一次成交价。回收业取价主流以此为锚。<br>
           <b>② 状态判读</b>：价格卡片右上角"自动"=接口拉取成功，"手工"=当前是手填值；刷新按钮短暂变色显示成功源（如"已刷新 · 东方财富 push2"）。打开页面后每 5 分钟自动刷新一次（仅 Tab 可见时触发）。<br>
           <b>③ 拿不到价格怎么办</b>：（a）直接手填三个价格输入框，全表自动重算，不影响使用；（b）F12 看 Console 是否有 CORS 报错，公网代理偶尔抽风换个时间再试；（c）生产环境推荐部署随附的 <code>prices_proxy.py</code>（东财主源 + 新浪兜底，30 秒缓存），nginx 反代到同域 <code>/api/prices</code> 即可一劳永逸。<br>
           <b>④ 单位约定</b>：白银 元/kg，铜/铝 元/吨，与 SHFE 主连合约 + 东财 push2 单位完全一致，前端零换算。
@@ -804,9 +805,9 @@ select, option{font-size:11px;}
 // 改这里 = 全局默认价改变，但用户已手动输入或 localStorage 保存的值依然优先
 // ============================================================
 var PRICE_DEFAULTS = {
-  AG: 18135,    // 银现货价 元/kg
-  AL: 24430,    // 铝现货价 元/吨
-  CU: 101030,   // 铜现货价 元/吨
+  AG: 18135,    // 银 SHFE 主连期货现价（参考值，自动接口/手工输入会覆盖）元/kg
+  AL: 24430,    // 铝 SHFE 主连期货现价 元/吨
+  CU: 101030,   // 铜 SHFE 主连期货现价 元/吨
 };
 
 // ============================================================
@@ -939,7 +940,7 @@ function setSrcAll(cls, txt){
 /* 价格合理区间（防 API 返回单位错位 / 异常值污染输入框） */
 var PRICE_SANE = {
   // 修复 BUG-3:原银上限 20000 偏窄,默认价 18135 已贴近,放宽至 35000 覆盖未来上涨情景
-  silverCnyKg:    [3000,  35000],   // 沪银现货 3-35k 元/kg
+  silverCnyKg:    [3000,  35000],   // 沪银期货主连 3-35k 元/kg
   aluminumCnyTon: [10000, 40000],   // 沪铝 12-25k 元/吨
   copperCnyTon:   [40000, 150000]   // 沪铜 50-110k 元/吨,放宽以备 2024+ 高点
 };
@@ -1131,15 +1132,34 @@ var CORS_PROXIES = [
 ];
 
 /* === ②c 东方财富 push2 实时报价 ===
- * URL: https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&secids=113.agm,113.cum,113.alm&fields=f12,f43,f60
- * secid 编码：113 = 上海期货交易所，agm=沪银主连，cum=沪铜主连，alm=沪铝主连
- * 字段：f12=代码, f43=最新价, f60=昨结
+ * URL: https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=200&...&fs=m:113&fields=f12,f14,f2,f18
+ *
+ * 用 clist/get（列表接口）而非 ulist.np/get：
+ *   ulist.np + f43/f60 对期货虚拟主连返 "-"（这俩字段是股票 stock/get 用的）
+ *   clist + f2/f18 才是期货主连真正能用的组合，efinance 库就是这么实现的
+ *
+ * 参数：
+ *   fs=m:113      → 筛 SHFE 上期所全部期货合约（一次性返回，含主连虚拟符号）
+ *   fid=f12       → 按代码排序，结果稳定
+ *   fltt=2,invt=2 → 复权类型、投资类型
+ *   ut=bd1d9...   → clist 接口的公开 token（与 stock/get 用的 fa5fd1... 不是同一个）
+ *
+ * 返回字段：
+ *   f12 = 合约代码（agm/cum/alm 为主连虚拟符号 + 各具体月份合约 AG2608 等）
+ *   f14 = 合约名称
+ *   f2  = 最新价   ← 重点：clist 用 f2，不是 f43
+ *   f18 = 昨日收盘 ← 重点：clist 用 f18，不是 f60
+ *
  * 单位：沪银 元/kg、沪铜/沪铝 元/吨（与本表完全一致，无需换算）
- * 不需要 token；大陆访问稳定。CORS 不一定开放，所以两步走：先直连，失败再过 CORS 代理。
+ * 解析：data.diff 是包含 SHFE 全部 ~50 个期货合约的数组，筛 f12 == agm/cum/alm 即可拿主连。
  */
 var EM_API_URL =
-  'https://push2.eastmoney.com/api/qt/ulist.np/get'
-  + '?fltt=2&secids=113.agm,113.cum,113.alm&fields=f12,f43,f60';
+  'https://push2.eastmoney.com/api/qt/clist/get'
+  + '?pn=1&pz=200&po=1&np=1'
+  + '&ut=bd1d9ddb04089700cf9c27f6f7426281'
+  + '&fltt=2&invt=2&fid=f12'
+  + '&fs=m:113'
+  + '&fields=f12,f14,f2,f18';
 
 function parseEastmoneyJson(json){
   var diff = json && json.data && json.data.diff;
@@ -1147,16 +1167,15 @@ function parseEastmoneyJson(json){
   var out = {};
   diff.forEach(function(item){
     if(!item) return;
-    var code = item.f12;
-    // 修复 BUG-1: fltt=2 时 f43/f60 经常返回字符串("7820.00"),原 (item.f43>0) 利用隐式转换通过,
-    // 但保留字符串类型,后续 inSaneRange 用 Number.isFinite 会拒绝合法报价导致主源 100% 失败。
-    // 强制 parseFloat 显式转 number。
-    var v = parseFloat(item.f43);
-    if(!(v>0)) v = parseFloat(item.f60);
+    // f12 = 合约代码；clist 通常返小写（agm/cum/alm），但仍统一转一遍稳一点
+    var code = String(item.f12 || '').toLowerCase();
+    // f2 = 最新价；f18 = 昨收。两者都可能返字符串或 "-"，parseFloat 对 "-" 返 NaN 是安全的
+    var v = parseFloat(item.f2);
+    if(!(v>0)) v = parseFloat(item.f18);
     if(!Number.isFinite(v) || v<=0) return;
-    if(code==='agm') out.silverCnyKg   = v;
-    if(code==='cum') out.copperCnyTon  = v;
-    if(code==='alm') out.aluminumCnyTon = v;
+    if(code === 'agm')      out.silverCnyKg    = v;
+    else if(code === 'cum') out.copperCnyTon   = v;
+    else if(code === 'alm') out.aluminumCnyTon = v;
   });
   if(!out.silverCnyKg && !out.copperCnyTon && !out.aluminumCnyTon) return null;
   out.updatedAt = new Date().toLocaleString('zh-CN');
@@ -2532,7 +2551,7 @@ function resetAssumpDefaults(){
   ASSUMP = JSON.parse(JSON.stringify(ASSUMP_DEFAULTS));
   // #7 同时重置非 data-key 的基准价/成本输入（这些不在 data-key 系统内）
   var nonKeyDefaults = { 'ag-price': PRICE_DEFAULTS.AG, 'al-price': PRICE_DEFAULTS.AL, 'cu-price': PRICE_DEFAULTS.CU, 'pc': DEFAULT_PC, 'tc': DEFAULT_TC, 'ak-profit': DEFAULT_PROFIT_PER_PIECE };
-  // 同步清除 localStorage 中保存的手工现货价 + pc/tc/ak-profit（恢复出厂 → 全部回默认）
+  // 同步清除 localStorage 中保存的手工期货现价 + pc/tc/ak-profit（恢复出厂 → 全部回默认）
   ['ag-price','al-price','cu-price','pc','tc','ak-profit'].forEach(function(id){
     try { localStorage.removeItem('pv_recyc_' + id); } catch(e) {}
   });
@@ -2585,11 +2604,11 @@ function attachEvents(){
   var renderDebounced=debounce(render, 120);
   var renderInvDebounced=debounce(renderInvestment, 120);
 
-  // 价格 / 成本输入：用 debounce + 持久化现货价（仅 ag/al/cu）
+  // 价格 / 成本输入：用 debounce + 持久化期货现价（仅 ag/al/cu）
   ['ag-price','al-price','cu-price','pc','tc','ak-profit'].forEach(function(id){
     var el=$(id); if(el) el.addEventListener('input', function(){
       renderDebounced();   // render 内会更新 *-eff-display
-      // 持久化银/铝/铜手工现货价 + 生产/运输/单片利润
+      // 持久化银/铝/铜手工期货现价 + 生产/运输/单片利润
       if(/^(ag|al|cu)-price$/.test(id) || /^(pc|tc|ak-profit)$/.test(id)){
         try {
           var v = el.value.trim();
@@ -2598,7 +2617,7 @@ function attachEvents(){
           } else {
             localStorage.setItem('pv_recyc_' + id, v);
           }
-          // 现货价才需要更新 "手工·已锁定" 标签（pc/tc/ak-profit 无 src 标签）
+          // 期货现价才需要更新 "手工·已锁定" 标签（pc/tc/ak-profit 无 src 标签）
           if(/^(ag|al|cu)-price$/.test(id)){
             var srcTag = $(id.split('-')[0] + '-src-tag');
             if(srcTag && localStorage.getItem('pv_recyc_' + id) != null){
@@ -2795,7 +2814,7 @@ loadExternalData().finally(function(){
     } catch(e) {}
   });
 
-  // 从 localStorage 恢复用户最近一次输入的现货价（银/铝/铜）
+  // 从 localStorage 恢复用户最近一次输入的期货现价（银/铝/铜）
   ['ag-price','al-price','cu-price'].forEach(function(id){
     try {
       var saved = localStorage.getItem('pv_recyc_' + id);
