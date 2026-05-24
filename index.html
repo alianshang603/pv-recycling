@@ -937,12 +937,13 @@ function setSrcAll(cls, txt){
   setSrcTag('cu-src-tag', cls, txt);
 }
 
-/* 价格合理区间（防 API 返回单位错位 / 异常值污染输入框） */
+/* 价格合理区间（防 API 返回单位错位 / 异常值 / 过期接口污染输入框） */
 var PRICE_SANE = {
-  // 修复 BUG-3:原银上限 20000 偏窄,默认价 18135 已贴近,放宽至 35000 覆盖未来上涨情景
-  silverCnyKg:    [3000,  35000],   // 沪银期货主连 3-35k 元/kg
-  aluminumCnyTon: [10000, 40000],   // 沪铝 12-25k 元/吨
-  copperCnyTon:   [40000, 150000]   // 沪铜 50-110k 元/吨,放宽以备 2024+ 高点
+  // 银下限从 3000 提到 12000：Sina AG0 接口长期返 ~8000 的过期快照（实测 2026-05 真实价 ~19000）
+  //   收紧后 Sina 脏值会被自动拒绝，落回 PRICE_DEFAULTS 或保留上次有效值
+  silverCnyKg:    [12000, 40000],   // 沪银期货主连 12-40k 元/kg
+  aluminumCnyTon: [12000, 35000],   // 沪铝主连 14-30k 元/吨（含未来涨幅冗余）
+  copperCnyTon:   [40000, 200000]   // 沪铜主连 50-150k 元/吨，已实测 5/24 ~105k
 };
 function inSaneRange(v, key){
   // 修复 BUG-1 兜底:本地 /prices.json 等数据源可能写字符串,显式 parseFloat
