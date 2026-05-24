@@ -1132,33 +1132,30 @@ var CORS_PROXIES = [
 ];
 
 /* === ②c 东方财富 push2 实时报价 ===
- * URL: https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=200&...&fs=m:113&fields=f12,f14,f2,f18
+ * URL: https://push2.eastmoney.com/api/qt/ulist.np/get?ut=...&secids=113.xxm,...&fields=f12,f14,f2,f18
  *
- * 用 clist/get（列表接口）而非 ulist.np/get：
- *   ulist.np + f43/f60 对期货虚拟主连返 "-"（这俩字段是股票 stock/get 用的）
- *   clist + f2/f18 才是期货主连真正能用的组合，efinance 库就是这么实现的
+ * 用 ulist.np/get + 显式 secids 列表（API 层精确过滤，5 条数据，最干净）。
+ * 5 个主连虚拟符号：
+ *   113.agm = 沪银主连（参与计算：银含量）
+ *   113.alm = 沪铝主连（参与计算：铝边框）
+ *   113.cum = 沪铜主连（参与计算：焊带/汇流条）
+ *   113.snm = 沪锡主连（占位，留作未来扩展，不参与当前计算）
+ *   113.pbm = 沪铅主连（占位，留作未来扩展，不参与当前计算）
  *
- * 参数：
- *   fs=m:113      → 筛 SHFE 上期所全部期货合约（一次性返回，含主连虚拟符号）
- *   fid=f12       → 按代码排序，结果稳定
- *   fltt=2,invt=2 → 复权类型、投资类型
- *   ut=bd1d9...   → clist 接口的公开 token（与 stock/get 用的 fa5fd1... 不是同一个）
+ * 关键参数（与之前 ulist.np 失败的版本对比）：
+ *   ut=bd1d9ddb04089700cf9c27f6f7426281 ✓ 这是 clist 系列的公开 token，对 ulist.np 也通
+ *      （之前用的 fa5fd1... 是 stock/get 用的，对 ulist.np 拿主连返 "-"）
+ *   字段 f2=最新价 / f18=昨收
+ *      （之前用的 f43/f60 是 stock/get 字段，对 ulist.np 拿主连同样返 "-"）
  *
- * 返回字段：
- *   f12 = 合约代码（agm/cum/alm 为主连虚拟符号 + 各具体月份合约 AG2608 等）
- *   f14 = 合约名称
- *   f2  = 最新价   ← 重点：clist 用 f2，不是 f43
- *   f18 = 昨日收盘 ← 重点：clist 用 f18，不是 f60
- *
- * 单位：沪银 元/kg、沪铜/沪铝 元/吨（与本表完全一致，无需换算）
- * 解析：data.diff 是包含 SHFE 全部 ~50 个期货合约的数组，筛 f12 == agm/cum/alm 即可拿主连。
+ * 已实测 5 条合约都能返合理价（agm 18681、alm 24470、cum 105090、snm 422020、pbm 16775）。
+ * 单位：沪银 元/kg、其余沪某 元/吨（无需换算，本表所有计算就是这俩单位）。
  */
 var EM_API_URL =
-  'https://push2.eastmoney.com/api/qt/clist/get'
-  + '?pn=1&pz=200&po=1&np=1'
-  + '&ut=bd1d9ddb04089700cf9c27f6f7426281'
-  + '&fltt=2&invt=2&fid=f12'
-  + '&fs=m:113'
+  'https://push2.eastmoney.com/api/qt/ulist.np/get'
+  + '?ut=bd1d9ddb04089700cf9c27f6f7426281'
+  + '&fltt=2&invt=2'
+  + '&secids=113.agm,113.alm,113.cum,113.snm,113.pbm'
   + '&fields=f12,f14,f2,f18';
 
 function parseEastmoneyJson(json){
@@ -1167,16 +1164,20 @@ function parseEastmoneyJson(json){
   var out = {};
   diff.forEach(function(item){
     if(!item) return;
-    // f12 = 合约代码；clist 通常返小写（agm/cum/alm），但仍统一转一遍稳一点
     var code = String(item.f12 || '').toLowerCase();
-    // f2 = 最新价；f18 = 昨收。两者都可能返字符串或 "-"，parseFloat 对 "-" 返 NaN 是安全的
+    // f2 = 最新价；f18 = 昨收。可能返字符串"24470.00"或"-"。parseFloat 对 "-" 返 NaN 是安全的。
     var v = parseFloat(item.f2);
     if(!(v>0)) v = parseFloat(item.f18);
     if(!Number.isFinite(v) || v<=0) return;
+    // 三个参与计算的金属
     if(code === 'agm')      out.silverCnyKg    = v;
     else if(code === 'cum') out.copperCnyTon   = v;
     else if(code === 'alm') out.aluminumCnyTon = v;
+    // 两个占位字段（API 层一并拉回，UI/计算不使用；为未来扩展预留）
+    else if(code === 'snm') out.tinCnyTon      = v;
+    else if(code === 'pbm') out.leadCnyTon     = v;
   });
+  // 只要三个核心金属任一有值即视为成功（snm/pbm 缺失不阻断）
   if(!out.silverCnyKg && !out.copperCnyTon && !out.aluminumCnyTon) return null;
   out.updatedAt = new Date().toLocaleString('zh-CN');
   return out;
