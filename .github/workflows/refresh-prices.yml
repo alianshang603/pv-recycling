@@ -26,7 +26,7 @@ jobs:
           node -e "
             const https = require('https');
             const fs = require('fs');
-            const EM = 'https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=200&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m:113&fields=f12,f14,f2,f18&_=' + Date.now();
+            const EM = 'https://push2.eastmoney.com/api/qt/ulist.np/get?ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&secids=113.agm,113.alm,113.cum,113.snm,113.pbm&fields=f12,f14,f2,f18&_=' + Date.now();
             const SINA = 'https://hq.sinajs.cn/list=AG0,CU0,AL0';
 
             function get(url, headers) {
@@ -47,7 +47,7 @@ jobs:
               const json = JSON.parse(txt);
               const diff = (json && json.data && json.data.diff) || [];
               const out = {};
-              // clist 一次返回 SHFE 全部期货合约，筛 f12 == agm/cum/alm 即可拿主连
+              // 5 个主连虚拟符号一次拉回；前 3 个参与计算，后 2 个 (snm/pbm) 占位备用
               for (const item of diff) {
                 const code = String(item.f12 || '').toLowerCase();
                 const v = parseFloat(item.f2) || parseFloat(item.f18);
@@ -55,6 +55,8 @@ jobs:
                 if (code === 'agm') out.silverCnyKg = v;
                 else if (code === 'cum') out.copperCnyTon = v;
                 else if (code === 'alm') out.aluminumCnyTon = v;
+                else if (code === 'snm') out.tinCnyTon = v;
+                else if (code === 'pbm') out.leadCnyTon = v;
               }
               if (!out.silverCnyKg && !out.copperCnyTon && !out.aluminumCnyTon) throw new Error('em empty');
               out.source = 'eastmoney-push2';
