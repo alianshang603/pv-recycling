@@ -5,6 +5,5 @@
   "tinCnyTon": 422020,
   "leadCnyTon": 16775,
   "source": "manual-from-em-verified",
-  "updatedAt": "2026-05-24T06:30:00.000Z",
-  "_note": "用户浏览器实测东财 ulist.np 接口返回值（5/23 周五收盘）。此文件由 .github/workflows/refresh-prices.yml 每 15 分钟自动覆盖，仅当 Action 失败时保留此手工基线。"
+  "updatedAt": "2026-05-24T06:30:00.000Z"
 }
