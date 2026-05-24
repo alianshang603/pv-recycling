@@ -842,10 +842,13 @@ var ASSUMP = {
 };
 // 出厂值快照，用于「恢复出厂」按钮
 var ASSUMP_DEFAULTS = JSON.parse(JSON.stringify(ASSUMP));
-var PRICE_PROXY_URL='/api/prices';
-var PRICE_FALLBACK_URL='/prices.json';
-var SPECS_URL='/specs.json';
-var ASSUMPTIONS_URL='/assumptions.json';
+// 修复：用相对路径而非绝对路径，否则 GitHub Pages 子路径部署（如 /pv-recycling/）下，
+//   '/api/prices' 会被浏览器解析为 https://<user>.github.io/api/prices （404，跳过站点子路径）
+//   './api/prices' 会正确解析为 https://<user>.github.io/<repo>/api/prices
+var PRICE_PROXY_URL='./api/prices';
+var PRICE_FALLBACK_URL='./prices.json';
+var SPECS_URL='./specs.json';        // 同 PRICE_FALLBACK_URL 的相对路径修复（防 GH Pages 子路径 404）
+var ASSUMPTIONS_URL='./assumptions.json';
 // 修复 BUG-10:价格基准日期抽成常量,统一注入说明区和 footer,避免日期硬编码两处易漏改
 var PRICE_BASELINE_DATE = '2026-04-14';
 
