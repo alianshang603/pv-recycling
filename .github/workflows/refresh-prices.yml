@@ -1,0 +1,115 @@
+name: Refresh prices.json
+
+# 触发：每 15 分钟跑一次 + 手动触发
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+# 注意：cron schedule 在 fork 仓库会被禁用；在私仓 inactive 60 天后也会暂停
+# 公网公开仓库正常使用即可
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: refresh-prices
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch prices and write prices.json
+        run: |
+          node -e "
+            const https = require('https');
+            const fs = require('fs');
+            const EM = 'https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=200&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m:113&fields=f12,f14,f2,f18&_=' + Date.now();
+            const SINA = 'https://hq.sinajs.cn/list=AG0,CU0,AL0';
+
+            function get(url, headers) {
+              return new Promise((resolve, reject) => {
+                const req = https.get(url, { headers: headers || {}, timeout: 10000 }, res => {
+                  if (res.statusCode !== 200) { res.resume(); return reject(new Error('http ' + res.statusCode)); }
+                  const chunks = [];
+                  res.on('data', c => chunks.push(c));
+                  res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+                });
+                req.on('error', reject);
+                req.on('timeout', () => { req.destroy(new Error('timeout')); });
+              });
+            }
+
+            async function tryEastmoney() {
+              const txt = await get(EM, { 'User-Agent': 'Mozilla/5.0', 'Referer': 'https://quote.eastmoney.com/' });
+              const json = JSON.parse(txt);
+              const diff = (json && json.data && json.data.diff) || [];
+              const out = {};
+              // clist 一次返回 SHFE 全部期货合约，筛 f12 == agm/cum/alm 即可拿主连
+              for (const item of diff) {
+                const code = String(item.f12 || '').toLowerCase();
+                const v = parseFloat(item.f2) || parseFloat(item.f18);
+                if (!(v > 0)) continue;
+                if (code === 'agm') out.silverCnyKg = v;
+                else if (code === 'cum') out.copperCnyTon = v;
+                else if (code === 'alm') out.aluminumCnyTon = v;
+              }
+              if (!out.silverCnyKg && !out.copperCnyTon && !out.aluminumCnyTon) throw new Error('em empty');
+              out.source = 'eastmoney-push2';
+              return out;
+            }
+            async function trySina() {
+              const txt = await get(SINA, { 'Referer': 'https://finance.sina.com.cn/', 'User-Agent': 'Mozilla/5.0' });
+              const parseLine = l => {
+                const p = l.split(',');
+                if (p.length < 10) return null;
+                for (const i of [8, 9, 2]) {
+                  const v = parseFloat(p[i]);
+                  if (Number.isFinite(v) && v > 0) return v;
+                }
+                return null;
+              };
+              const grab = tag => {
+                const m = txt.match(new RegExp('hq_str_' + tag + '\\\\s*=\\\\s*\"([^\"]*)\"'));
+                return m ? parseLine(m[1]) : null;
+              };
+              const ag = grab('AG0'), cu = grab('CU0'), al = grab('AL0');
+              if (!ag && !cu && !al) throw new Error('sina empty');
+              const out = {};
+              if (ag) out.silverCnyKg = ag;
+              if (cu) out.copperCnyTon = cu;
+              if (al) out.aluminumCnyTon = al;
+              out.source = 'sina-shfe';
+              return out;
+            }
+
+            (async () => {
+              let out;
+              try { out = await tryEastmoney(); }
+              catch (e1) {
+                console.error('eastmoney failed:', e1.message);
+                try { out = await trySina(); }
+                catch (e2) {
+                  console.error('sina failed:', e2.message);
+                  process.exit(1);
+                }
+              }
+              out.updatedAt = new Date().toISOString();
+              fs.writeFileSync('prices.json', JSON.stringify(out, null, 2));
+              console.log('Wrote prices.json:', out);
+            })();
+          "
+
+      - name: Commit if changed
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --quiet prices.json 2>/dev/null; then
+            git add prices.json
+            git commit -m "chore: refresh prices.json [skip ci]"
+            git push
+          else
+            echo "prices.json unchanged, skipping commit"
+          fi
