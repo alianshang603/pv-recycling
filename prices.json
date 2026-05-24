@@ -1,0 +1,8 @@
+{
+  "silverCnyKg": 20800,
+  "copperCnyTon": 78300,
+  "aluminumCnyTon": 20500,
+  "updatedAt": "2026-05-23T00:00:00.000Z",
+  "source": "manual-baseline",
+  "_note": "此文件由 .github/workflows/refresh-prices.yml 每 15 分钟自动覆盖，无需手动编辑。这里的值仅作为 Action 首次成功执行前的占位。"
+}
